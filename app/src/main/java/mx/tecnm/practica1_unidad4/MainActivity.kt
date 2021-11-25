@@ -18,6 +18,12 @@ import mx.tecnm.practica1_unidad4.Modelos.Contacto
 import mx.tecnm.practica1_unidad4.ModelosBD.CONTACTO
 import mx.tecnm.practica1_unidad4.databinding.ActivityMainBinding
 import java.util.*
+import android.content.SharedPreferences
+
+import android.preference.PreferenceManager
+
+
+
 
 class MainActivity : AppCompatActivity(),RecyclerAdapter.onClickListener, SearchView.OnQueryTextListener {
     private lateinit var b: ActivityMainBinding
@@ -40,6 +46,23 @@ class MainActivity : AppCompatActivity(),RecyclerAdapter.onClickListener, Search
         if (!hasPermissions(this, *PERMISSIONS)) {
             ActivityCompat.requestPermissions(this, PERMISSIONS, PERMISSION_ALL)
         }
+
+        val builder = AlertDialog.Builder(this)
+        builder.setTitle("Advertencia")
+        val prefs = PreferenceManager.getDefaultSharedPreferences(this)
+        if (!prefs.getBoolean("firstTime", false)) {
+            builder.setMessage("Esta aplicación se ejecuta siempre y cuando esté abierta.\n Al agregar números escribe los puros números por favor.\n Enviara a buzón a los de lista negra con mensaje y a los de lista blanca al no contestarle les dirá que les llamara luego por SMS.\n El botón arriba del '+'(Agregar) es para cambiar entre listas")
+            builder.setPositiveButton("OK"){ d,w->
+                d.dismiss()
+            }
+            builder.show()
+            // mark first time has ran.
+            val editor = prefs.edit()
+            editor.putBoolean("firstTime", true)
+            editor.commit()
+        }
+
+
         b.btnAgregarListaNegra.setOnClickListener {
             val intento = Intent( this, AgregarListaNegra::class.java)
             startActivity(intento)
@@ -86,6 +109,7 @@ class MainActivity : AppCompatActivity(),RecyclerAdapter.onClickListener, Search
                     listaContacto.removeAt(position)
                     listaContactoOriginal?.removeAt(position)
                     RecargarRecycler()
+                    d.dismiss()
                 }
                 builder.setNegativeButton("No"){ d,w->
                     d.cancel()
