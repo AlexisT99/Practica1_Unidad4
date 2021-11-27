@@ -21,8 +21,7 @@ import java.util.*
 import android.content.SharedPreferences
 
 import android.preference.PreferenceManager
-
-
+import com.google.firebase.firestore.FirebaseFirestore
 
 
 class MainActivity : AppCompatActivity(),RecyclerAdapter.onClickListener, SearchView.OnQueryTextListener {
